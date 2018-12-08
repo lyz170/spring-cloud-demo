@@ -1,0 +1,25 @@
+## App property info
+app:
+  property:
+    log-path: /mycloud/springcloud-app-salary/default-logs
+    env: DEFAULT
+
+## Server info
+server:
+  port: 9211
+  servlet:
+    context-path: /app-salary
+
+## Eureka info
+eureka:
+  instance:
+    # 注册服务的IP而不是服务器名称
+    preferIpAddress: true
+  client:
+    # 向Eureka注册服务
+    registerWithEureka: true
+    # 拉取注册表的本地副本
+    fetchRegistry: true
+    serviceUrl:
+      # 查询[helloworld]项目信息：<http://localhost:9121/server-eureka/eureka/apps/app-salary>
+      defaultZone: http://localhost:9121/server-eureka/eureka/

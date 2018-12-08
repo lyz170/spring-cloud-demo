@@ -1,0 +1,32 @@
+## App property info
+app:
+  property:
+    log-path: /mycloud/springcloud-server-config/logs
+
+## Server Info
+server:
+  port: 9111
+  servlet:
+    context-path: /server-config
+
+# Spring Info
+# Git solution
+#spring:
+#  cloud:
+#    config:
+#      server:
+#        encrypt.enabled: false
+#        git:
+#          uri: https://github.com/xxx/xxx/
+#          searchPaths: app-salary,app-tax-calc
+#          username: xxxxx
+#          password: xxxxx
+#Classpath and file-based solution
+spring:
+  profiles:
+    active: native
+  cloud:
+     config:
+       server:
+           native:
+              searchLocations: classpath:config/,classpath:config/app-salary,classpath:config/app-tax-calc,classpath:config/server-eureka

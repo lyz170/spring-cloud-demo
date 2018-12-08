@@ -1,0 +1,30 @@
+## App property info
+app:
+  property:
+    log-path: /mycloud/springcloud-server-eureka/default-logs
+    env: DEFAULT
+
+## Server info
+server:
+  port: 9121
+  servlet:
+    # 打开注册中心网页：<http://localhost:9121/server-eureka/>
+    context-path: /server-eureka
+
+## Eureka info
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    # 程序启动时不要通过Eureka注册服务，因为它本身就是Eureka服务
+    registerWithEureka: false
+    # 不会在本地缓存注册表信息
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/server-eureka/eureka/
+  # Eureka不会马上通知任何注册它的服务，默认情况下会等待5min。本地测试时应该注释掉此行，以加快程序运行
+  # 每次服务注册需要30s的时间才能显示在Eureka服务中，因为Eureka需要接收3此心跳包，每次间隔10s，然后才能使用这个服务。
+  #server:
+  #  waitTimeInMsWhenSyncEmpty: 5
+  server:
+    waitTimeInMsWhenSyncEmpty: 0
