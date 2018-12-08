@@ -1,43 +1,43 @@
 package com.mycloud.demo.service;
 
-import java.util.List;
-
+import com.mycloud.demo.call.CallAppTaxCalcService;
+import com.mycloud.demo.config.AppException;
+import com.mycloud.demo.entity.Employee;
+import com.mycloud.demo.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mycloud.demo.call.CallAppTaxCalcService;
-import com.mycloud.demo.config.AppException;
-import com.mycloud.demo.model.Employee;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SalaryService {
 
-	@Autowired
-	private CallAppTaxCalcService callAppTaxCalcService;
+    @Autowired
+    private CallAppTaxCalcService callAppTaxCalcService;
 
-	public List<Employee> findAll() {
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
-		List<Employee> results = Employee.getEmployees();
-		callAppTaxCalcService.fillTax(results);
+    public List<Employee> findAll() {
 
-		return results;
-	}
+        List<Employee> results = employeeRepository.findAll();
+        callAppTaxCalcService.fillTax(results);
 
-	public Employee findById(String id) {
-		Long idLong = null;
-		try {
-			idLong = Long.valueOf(id);
-		} catch (NumberFormatException e) {
-			throw new AppException(e);
-		}
-		Employee result = Employee.getEmployee(idLong);
+        return results;
+    }
 
-		if (result == null) {
-			throw new AppException(String.format("Can not find the employee which id = %s.", id));
-		}
+    public Employee findById(String id) {
 
-		callAppTaxCalcService.fillTax(result);
+        Optional<Employee> optResult = employeeRepository.findById(id);
 
-		return result;
-	}
+        if (!optResult.isPresent()) {
+            throw new AppException(String.format("Can not find the employee which id = %s.", id));
+        }
+
+        Employee result = optResult.get();
+        callAppTaxCalcService.fillTax(result);
+
+        return result;
+    }
 }

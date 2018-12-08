@@ -13,7 +13,7 @@ import org.springframework.cloud.config.server.EnableConfigServer;
  * /{应用名}-{环境名}.properties<br>
  * /{分支名}/{应用名}-{环境名}.yml<br>
  * /{分支名}/{应用名}-{环境名}.properties<br>
- * 
+ * <p>
  * URLs:<br>
  * [app-salary]<br>
  * http://localhost:9111/server-config/app-salary/default::http://localhost:9111/server-config/app-salary.yml<br>
@@ -32,10 +32,10 @@ import org.springframework.cloud.config.server.EnableConfigServer;
 @EnableConfigServer
 public class ConfigServerApplication {
 
-	private static final Logger logger = LoggerFactory.getLogger(ConfigServerApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConfigServerApplication.class);
 
-	public static void main(String[] args) {
-		SpringApplication.run(ConfigServerApplication.class, args);
-		logger.info("<<<<<<<<<< Application[springcloud-server-config] Started >>>>>>>>>>");
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ConfigServerApplication.class, args);
+        logger.info("<<<<<<<<<< Application[springcloud-server-config] Started >>>>>>>>>>");
+    }
 }

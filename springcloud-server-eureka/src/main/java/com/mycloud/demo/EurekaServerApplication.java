@@ -18,18 +18,18 @@ import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 @EnableEurekaServer
 public class EurekaServerApplication implements CommandLineRunner {
 
-	@Value("${app.property.env}")
-	public String ENVIRONMENT;
+    @Value("${app.property.env}")
+    public String ENVIRONMENT;
 
-	private static final Logger logger = LoggerFactory.getLogger(EurekaServerApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger(EurekaServerApplication.class);
 
-	public static void main(String[] args) {
-		SpringApplication.run(EurekaServerApplication.class, args);
-		logger.info("<<<<<<<<<< Application[springcloud-server-eureka] Started >>>>>>>>>>");
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(EurekaServerApplication.class, args);
+        logger.info("<<<<<<<<<< Application[springcloud-server-eureka] Started >>>>>>>>>>");
+    }
 
-	@Override
-	public void run(String... args) throws Exception {
-		logger.info(String.format("<<<<<<<<<< Environment : %s >>>>>>>>>>", ENVIRONMENT.toUpperCase()));
-	}
+    @Override
+    public void run(String... args) throws Exception {
+        logger.info(String.format("<<<<<<<<<< Environment : %s >>>>>>>>>>", ENVIRONMENT.toUpperCase()));
+    }
 }

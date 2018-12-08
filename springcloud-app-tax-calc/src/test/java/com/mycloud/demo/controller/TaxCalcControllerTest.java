@@ -1,10 +1,7 @@
 package com.mycloud.demo.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import net.minidev.json.JSONObject;
+import net.minidev.json.JSONValue;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -17,33 +14,35 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import net.minidev.json.JSONObject;
-import net.minidev.json.JSONValue;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class TaxCalcControllerTest {
 
-	private static final Logger logger = LoggerFactory.getLogger(TaxCalcControllerTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(TaxCalcControllerTest.class);
 
-	@LocalServerPort
-	private int port;
+    @LocalServerPort
+    private int port;
 
-	@Autowired
-	private TestRestTemplate restTemplate;
+    @Autowired
+    private TestRestTemplate restTemplate;
 
-	@Test
-	public void case1() {
-		List<String> paramList = new ArrayList<>();
-		paramList.add("5000");
-		paramList.add("50000");
-		ResponseEntity<String> responseEntity = restTemplate
-				.postForEntity("http://localhost:" + port + "/app-tax-calc/tax-calc/all", paramList, String.class);
-		String body = responseEntity.getBody();
-		logger.info("The Response body is: " + body);
-		JSONObject jsonObj = (JSONObject) JSONValue.parse(body);
-		assertThat(jsonObj.get("status")).isEqualTo("200");
-		assertThat(jsonObj.get("message").toString()).isEqualTo("OK");
-		assertThat(jsonObj.get("content").toString()).isEqualTo("[\"0.00\",\"9090.00\"]");
-	}
+    @Test
+    public void case1() {
+        List<String> paramList = new ArrayList<>();
+        paramList.add("5000");
+        paramList.add("50000");
+        ResponseEntity<String> responseEntity = restTemplate
+                .postForEntity("http://localhost:" + port + "/app-tax-calc/tax-calc/all", paramList, String.class);
+        String body = responseEntity.getBody();
+        logger.info("The Response body is: " + body);
+        JSONObject jsonObj = (JSONObject) JSONValue.parse(body);
+        assertThat(jsonObj.get("status")).isEqualTo("200");
+        assertThat(jsonObj.get("message").toString()).isEqualTo("OK");
+        assertThat(jsonObj.get("content").toString()).isEqualTo("[\"0.00\",\"9090.00\"]");
+    }
 }

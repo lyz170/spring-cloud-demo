@@ -10,6 +10,19 @@ server:
   servlet:
     context-path: /app-salary
 
+# DataSource Info
+spring:
+  datasource:
+    jdbc-url: jdbc:hsqldb:mem:/app-salary
+#    # Enable DDL Initialization
+#    schema: classpath:schema.sql
+#    # Enable DML Initialization
+#    data: classpath:data.sql
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
 ## Eureka info
 eureka:
   instance:

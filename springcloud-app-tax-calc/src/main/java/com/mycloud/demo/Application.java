@@ -15,18 +15,18 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 
-	@Value("${app.property.env}")
-	public String ENVIRONMENT;
+    @Value("${app.property.env}")
+    public String ENVIRONMENT;
 
-	private static final Logger logger = LoggerFactory.getLogger(Application.class);
+    private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-		logger.info("<<<<<<<<<< Application[springcloud-app-tax-calc] Started >>>>>>>>>>");
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+        logger.info("<<<<<<<<<< Application[springcloud-app-tax-calc] Started >>>>>>>>>>");
+    }
 
-	@Override
-	public void run(String... args) throws Exception {
-		logger.info(String.format("<<<<<<<<<< Environment : %s >>>>>>>>>>", ENVIRONMENT.toUpperCase()));
-	}
+    @Override
+    public void run(String... args) throws Exception {
+        logger.info(String.format("<<<<<<<<<< Environment : %s >>>>>>>>>>", ENVIRONMENT.toUpperCase()));
+    }
 }
