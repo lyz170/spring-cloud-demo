@@ -1,27 +1,27 @@
 package com.mycloud.demo.service;
 
 import com.mycloud.demo.call.CallAppTaxCalcService;
-import com.mycloud.demo.config.AppException;
 import com.mycloud.demo.entity.Employee;
-import com.mycloud.demo.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@Transactional
 public class SalaryService {
 
     @Autowired
     private CallAppTaxCalcService callAppTaxCalcService;
 
     @Autowired
-    private EmployeeRepository employeeRepository;
+    private EmployeeService employeeService;
+
 
     public List<Employee> findAll() {
 
-        List<Employee> results = employeeRepository.findAll();
+        List<Employee> results = employeeService.findAll();
         callAppTaxCalcService.fillTax(results);
 
         return results;
@@ -29,13 +29,7 @@ public class SalaryService {
 
     public Employee findById(String id) {
 
-        Optional<Employee> optResult = employeeRepository.findById(id);
-
-        if (!optResult.isPresent()) {
-            throw new AppException(String.format("Can not find the employee which id = %s.", id));
-        }
-
-        Employee result = optResult.get();
+        Employee result = employeeService.findById(id);
         callAppTaxCalcService.fillTax(result);
 
         return result;
