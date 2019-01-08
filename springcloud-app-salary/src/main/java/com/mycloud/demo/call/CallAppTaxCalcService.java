@@ -1,6 +1,7 @@
 package com.mycloud.demo.call;
 
 import com.mycloud.demo.entity.Employee;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.JSONValue;
@@ -35,10 +36,12 @@ public class CallAppTaxCalcService {
 
     private static final RestTemplate restTemplate = new RestTemplate();
 
+    @HystrixCommand
     public void fillTax(List<Employee> params) {
         fillTaxInner(params);
     }
 
+    @HystrixCommand
     public void fillTax(Employee param) {
         List<Employee> params = new ArrayList<>();
         params.add(param);

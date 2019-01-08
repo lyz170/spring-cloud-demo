@@ -3,7 +3,7 @@
 <configuration>
     <!-- 从配置文件中读取log-path的路径 -->
     <springProperty scope="context" name="LOG_PATH" source="app.property.log-path"
-                    defaultValue="/mycloud/spring-cloud-server-eureka/local-logs"/>
+                    defaultValue="/mycloud/springcloud-server-eureka/local-logs"/>
 
     <!-- 彩色日志依赖的渲染类 -->
     <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
@@ -29,11 +29,11 @@
     <!-- 2.输出到文件 -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 正在记录的日志文档的路径及文档名 -->
-        <file>${LOG_PATH}/spring-cloud-service-eurekaserver.log</file>
+        <file>${LOG_PATH}/springcloud-server-eureka.log</file>
         <!-- 日志记录器的滚动策略，按日期，按大小记录 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 每天日志归档路径以及格式 -->
-            <fileNamePattern>${LOG_PATH}/spring-cloud-service-eurekaserver.%d{yyyyMMdd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_PATH}/springcloud-server-eureka.%d{yyyyMMdd}.log</fileNamePattern>
             <!--日志文档保留天数 -->
             <maxHistory>7</maxHistory>
         </rollingPolicy>

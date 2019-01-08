@@ -29,11 +29,11 @@
     <!-- 2.输出到文件 -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 正在记录的日志文档的路径及文档名 -->
-        <file>${LOG_PATH}/spring-cloud-server-config.log</file>
+        <file>${LOG_PATH}/springcloud-server-config.log</file>
         <!-- 日志记录器的滚动策略，按日期，按大小记录 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 每天日志归档路径以及格式 -->
-            <fileNamePattern>${LOG_PATH}/spring-cloud-server-config.%d{yyyyMMdd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_PATH}/springcloud-server-config.%d{yyyyMMdd}.log</fileNamePattern>
             <!--日志文档保留天数 -->
             <maxHistory>7</maxHistory>
         </rollingPolicy>
