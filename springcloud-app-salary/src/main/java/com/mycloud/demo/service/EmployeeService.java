@@ -1,16 +1,17 @@
 package com.mycloud.demo.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.mycloud.demo.config.AppException;
 import com.mycloud.demo.entity.Employee;
 import com.mycloud.demo.repository.EmployeeRepository;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -22,6 +23,7 @@ public class EmployeeService {
     private EmployeeRepository employeeRepository;
 
     /**
+     * 使用 [@HystrixCommand] 注解表示该方法由Hystrix断路器进行管理。<br>
      * (1) 使用[@HystrixCommand]注解表示该方法由Hystrix断路器进行管理。<br>
      * 被[@HystrixCommand]注解标注的方法会被AOP拦截，具体逻辑在HystrixCommandAspect.java中。<br>
      * 这里的例子主要有以下两个：<br>
@@ -31,7 +33,7 @@ public class EmployeeService {
      * 当Spring框架检测到该注解时，将生成一个动态代理包装该方法，并用过专门用于处理远程调用的线程池来管理对该方法的所有调用。<br>
      * 使用默认的@HystrixCommand时，它将把所有线程放到同一个线程池中，有可能会出现问题，最好使用舱壁模式。<br>
      * 使用[commandProperties]可以设置参数：<br>
-     * - execution.isolation.thread.timeoutInMilliseconds：超时时间<br>
+     * - execution.isolation.thread.timeoutInMilliseconds：超时时间(default: 1000)<br>
      * - circuitBreaker.requestVolumeThreshold: 当Hystrix遇到服务错误时，它将开始一个10s的计时器，用于检查服务调用次数和故障百分比，
      * 如果10s内没有达到最小调用数量[参数]，那么即使有几个（甚至全部）调用失败，Hystrix也不会采取行动。<br>
      * - circuitBreaker.errorThresholdPercentage: 如果上一个参数触发，则要看故障百分比，如果百分比超过阈值[参数]，Hystrix将触发断路器，
@@ -48,33 +50,24 @@ public class EmployeeService {
      * Hystrix不仅能够长时间运行调用，它还会监控调用失败次数，如果调用失败次数足够多，那么Hystrix会在请求发送到远端资源之前跳闸，<br>
      * 即快速失败来自动阻止未来的调用。快速失败可以防止引用程序等待时间超时，也可以阻止服务客户端频繁调用超过负载而崩溃。<br>
      * 快速失败给了性能下降的系统时间去恢复。<br>
-     * https://github.com/Netflix/Hystrix/wiki/Configuration
+     * https://github.com/Netflix/Hystrix/wiki/Configuration<br>
      * HystrixCommandProperties.java
      */
-    @HystrixCommand(
-            commandProperties = {
-                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000"),
-                    @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "20"),
-                    @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "50"),
-                    @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000"),
-                    @HystrixProperty(name = "metrics.rollingStats.timeInMilliseconds", value = "10000"),
-                    @HystrixProperty(name = "metrics.rollingStats.numBuckets", value = "10")
-
-            },
-            fallbackMethod = "callFallbackMethod1",
-            threadPoolKey = "findAllPoolKey",
-            threadPoolProperties = {
+    @HystrixCommand(commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000"),
+            @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "20"),
+            @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "50"),
+            @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000"),
+            @HystrixProperty(name = "metrics.rollingStats.timeInMilliseconds", value = "10000"),
+            @HystrixProperty(name = "metrics.rollingStats.numBuckets", value = "10") }, fallbackMethod = "callFallbackMethod1", threadPoolKey = "findAllPoolKey", threadPoolProperties = {
                     @HystrixProperty(name = "coreSize", value = "30"),
-                    @HystrixProperty(name = "maxQueueSize", value = "101")
-            }
-    )
+                    @HystrixProperty(name = "maxQueueSize", value = "101") })
     public List<Employee> findAll() {
         return employeeRepository.findAll();
     }
 
     @HystrixCommand(commandProperties = {
-            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000")
-    }, fallbackMethod = "callFallbackMethod2")
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000") }, fallbackMethod = "callFallbackMethod2")
     public Employee findById(String id) {
         Optional<Employee> optResult = employeeRepository.findById(id);
         if (!optResult.isPresent()) {

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+  <head>
+    <!-- Required meta tags: must set to top 3 -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login page</title>
+    <!-- CSS field -->
+    <link rel="stylesheet" href="/app-client/webjars/bootstrap/3.3.7/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}">
+  </head>
+  <body>
+    <div class="container" style="margin-top: 150px;">
+      <div class="row">
+        <div sec:authorize="not isAuthenticated()" class="col-md-10 col-md-offset-1">
+          <div>Login With Github: <a href="/app-client/login/github" th:href="@{/login/github}">click here</a></div>
+          <div>Login With My App: <a href="/app-client/login/myapp" th:href="@{/login/myapp}">click here</a></div>
+        </div>
+        <div sec:authorize="isAuthenticated()">
+          <div class="col-md-10 col-md-offset-1">
+            Welcome, <span sec:authentication="name"></span>! <a id="logout-link" href="#">logout</a>
+          </div>
+          <div class="col-md-10 col-md-offset-1" style="margin-top: 20px;">
+            <span>-- More info --</span>
+            <ul>
+                <!-- Please see [OAuth2Authentication.java contains UsernamePasswordAuthenticationToken implements Authentication] -->
+                <li><b>UserAuthentication: </b><span sec:authentication="userAuthentication"></span></li>
+                <!-- Please see [UsernamePasswordAuthenticationToken.java implements Authentication] -->
+                <li><b>principal: </b><span sec:authentication="userAuthentication.principal"></span></li>
+                <li><b>credentials: </b><span sec:authentication="userAuthentication.credentials"></span></li>
+                <li><b>authorities: </b><span sec:authentication="userAuthentication.authorities"></span></li>
+                <li><b>details: </b><span sec:authentication="userAuthentication.details"></span></li>
+            </ul>
+          </div>
+          <div class="col-md-10 col-md-offset-1" style="margin-top: 20px;">
+            <span>-- For example: email --</span>
+            <div th:each="elem : ${#authentication.userAuthentication.details}">
+              <div th:if="*{elem.key eq 'email'}" th:text="*{elem.value}"></div>
+            </div>
+          </div>
+          <!--===== logout must be post =====-->
+          <form id="logout-form" action="/app-client/logout" th:action="@{/logout}" method="post"></form>
+        </div>
+      </div>
+    </div>
+    <!--===== Script field =====-->
+    <script type="text/javascript" src="/app-client/webjars/jquery/3.3.1/jquery.min.js" th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+    <script type="text/javascript" src="/app-client/webjars/bootstrap/3.3.7/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $('#logout-link').click(function() {
+          $('#logout-form').submit();
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,12 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.mytest.demo</groupId>
-    <artifactId>app-salary</artifactId>
+    <groupId>com.mycloud.demo</groupId>
+    <artifactId>springcloud-app-salary</artifactId>
     <version>1.0</version>
 
-    <name>app-salary</name>
+    <name>springcloud-app-salary</name>
     <description>Demo application client to get salary.</description>
 
     <parent>
@@ -40,10 +40,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-        <!-- hsql -->
+        <!-- Spring boot starter: actuator -->
         <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <!-- Spring cloud starter: config client -->
         <dependency>
@@ -60,7 +60,17 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
         </dependency>
+        <!-- Spring cloud starter: Security (Resource Server) -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-security</artifactId>
+        </dependency>
 
+        <!-- hsql -->
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+        </dependency>
         <!-- Tools: commons-lang3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>

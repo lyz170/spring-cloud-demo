@@ -11,8 +11,7 @@ import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 /**
  * URLs:<br>
  * http://localhost:9121/server-eureka<br>
- * http://localhost:9121/server-eureka/eureka/apps/app-salary<br>
- * http://localhost:9121/server-eureka/eureka/apps/app-tax-calc<br>
+ * http://localhost:9121/server-eureka/eureka/apps/{service-id}<br>
  */
 @SpringBootApplication
 @EnableEurekaServer

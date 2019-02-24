@@ -1,0 +1,5 @@
+## App property info
+app:
+  property:
+    log-path: /mycloud/springcloud-app-client/logs
+    env: PROD

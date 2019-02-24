@@ -3,10 +3,10 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mycloud.demo</groupId>
-    <artifactId>app-tax-calc</artifactId>
+    <artifactId>springcloud-app-tax-calc</artifactId>
     <version>1.0</version>
 
-    <name>app-tax-calc</name>
+    <name>springcloud-app-tax-calc</name>
     <description>Demo application client for calculate tax</description>
 
     <parent>
@@ -34,6 +34,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- Spring boot starter: actuator -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <!-- Spring cloud starter: config client -->
         <dependency>

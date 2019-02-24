@@ -1,51 +1,118 @@
 package com.mycloud.demo.call;
 
-import com.mycloud.demo.entity.Employee;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
-import net.minidev.json.JSONValue;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.mycloud.demo.entity.Employee;
+import com.netflix.hystrix.contrib.javanica.annotation.DefaultProperties;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
+import net.minidev.json.JSONValue;
+
+/**
+ * 使用服务发现来查找服务<br>
+ * ----------------------------------------------<br>
+ * (1) 使用Spring DiscoveryClient：使用DiscoveryClient可以查询通过Ribbon注册的所有服务及对应的URL<br>
+ * 从Spring Cloud Edgware开始，@EnableDiscoveryClient或@EnableEurekaClient可省略。只需加上相关依赖，并进行相应配置，即可将微服务注册到服务发现组件上。<br>
+ * SpringCLoud中的Discovery Service有多种实现，比如：eureka, consul, zookeeper<br>
+ * - @EnableDiscoveryClient 注解是基于spring-cloud-commons依赖，并且在classpath中实现；<br>
+ * - @EnableEurekaClient 注解是基于spring-cloud-netflix依赖，只能为eureka作用； <br>
+ * 如果你的classpath中添加了eureka，则它们的作用是一样的。<br>
+ * 
+ * <pre>
+ * &#64;Autowired
+ * private LoadBalancerClient loadBalancer;
+ * 
+ * public void doStuff() {
+ *     ServiceInstance instance = loadBalancer.choose("service-id");
+ *     URI storesUri = URI.create(String.format("http://%s:%s", instance.getHost(), instance.getPort()));
+ *     RestTemplate restTemplate = new RestTemplate();
+ *     restTemplate.getForObject("storesUri" + "/xxx/xxx", String.class);
+ * }
+ * </pre>
+ * 
+ * ----------------------------------------------<br>
+ * (2) [CURRENT] 使用带有Ribbon功能的Spring RestTemplate调用服务<br>
+ * 
+ * <pre>
+ * &#64;LoadBalanced
+ * &#64;Bean
+ * public RestTemplate loadbalancedRestTemplate() {
+ *     return new RestTemplate();
+ * }
+ * 
+ * public String getFirstProduct() {
+ *     return this.restTemplate.getForObject("https://service-id/xxx/xxx", String.class);
+ * }
+ * </pre>
+ * 
+ * ----------------------------------------------<br>
+ * (3) 使用Netflix Feign客户端调用服务<br>
+ * 
+ * <pre>
+ * &#64;SpringBootApplication
+ * &#64;EnableFeignClients
+ * public class Application {
+ * }
+ * 
+ * &#64;FeignClient("service-id")
+ * public interface StoreClient {
+ *     &#64;RequestMapping(method = RequestMethod.GET, value = "/xxx")
+ *     List<Store> getStores();
+ * 
+ *     &#64;RequestMapping(method = RequestMethod.POST, value = "/xxx/{xxx}", consumes = "application/json")
+ *     Store update(@PathVariable("storeId") Long storeId, Store store);
+ * }
+ * </pre>
+ * 
+ * ----------------------------------------------<br>
+ */
 @Service
+@DefaultProperties(commandProperties = {
+        @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000") })
 public class CallAppTaxCalcService {
 
     private static final Logger logger = LoggerFactory.getLogger(CallAppTaxCalcService.class);
 
-    /**
-     * 客户端负载均衡<br>
-     * Using the Ribbon. Ribbon is a client-side load balancer that gives you a lot of control over the behavior of HTTP
-     * and TCP clients.
-     */
     @Autowired
-    private LoadBalancerClient loadBalancer;
+    private RestTemplate restTemplate;
 
-    private static final RestTemplate restTemplate = new RestTemplate();
-
-    @HystrixCommand
+    @HystrixCommand(fallbackMethod = "callFallbackMethod1")
     public void fillTax(List<Employee> params) {
         fillTaxInner(params);
     }
 
-    @HystrixCommand
+    @HystrixCommand(fallbackMethod = "callFallbackMethod2")
     public void fillTax(Employee param) {
         List<Employee> params = new ArrayList<>();
         params.add(param);
         fillTaxInner(params);
+    }
+
+    private void callFallbackMethod1(List<Employee> params) {
+        params.forEach(p -> {
+            p.setTax("-");
+            p.setSalaryAfterTax("-");
+        });
+    }
+
+    private void callFallbackMethod2(Employee param) {
+        param.setTax("-");
+        param.setSalaryAfterTax("-");
     }
 
     private void fillTaxInner(List<Employee> params) {
@@ -54,12 +121,8 @@ public class CallAppTaxCalcService {
 
             List<String> paramList = params.stream().map(p -> p.getSalary().toString()).collect(Collectors.toList());
 
-            ServiceInstance instance = loadBalancer.choose("app-tax-calc");
-            String uri = String.format("http://%s:%s", instance.getHost(), instance.getPort());
-            logger.info("URI is: " + uri);
-
-            ResponseEntity<String> responseEntity = restTemplate.postForEntity(uri + "/app-tax-calc/tax-calc/all",
-                    paramList, String.class);
+            ResponseEntity<String> responseEntity = restTemplate
+                    .postForEntity("http://app-tax-calc/app-tax-calc/tax-calc/all", paramList, String.class);
             String body = responseEntity.getBody();
             logger.info("The Response body is: " + body);
 

@@ -1,10 +1,11 @@
 package com.mycloud.demo.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
-import java.io.Serializable;
 
 @Entity(name = "employee")
 public class Employee implements Serializable {
@@ -17,6 +18,9 @@ public class Employee implements Serializable {
 
     @Column(length = 16, nullable = false)
     private String employeeName;
+
+    @Column(length = 32, nullable = false)
+    private String employeeEmail;
 
     @Column(length = 16, nullable = false)
     private String salary;
@@ -41,6 +45,14 @@ public class Employee implements Serializable {
 
     public void setEmployeeName(String employeeName) {
         this.employeeName = employeeName;
+    }
+
+    public String getEmployeeEmail() {
+        return employeeEmail;
+    }
+
+    public void setEmployeeEmail(String employeeEmail) {
+        this.employeeEmail = employeeEmail;
     }
 
     public String getSalary() {
@@ -69,12 +81,7 @@ public class Employee implements Serializable {
 
     @Override
     public String toString() {
-        return "Employee{" +
-                "employeeId='" + employeeId + '\'' +
-                ", employeeName='" + employeeName + '\'' +
-                ", salary='" + salary + '\'' +
-                ", tax='" + tax + '\'' +
-                ", salaryAfterTax='" + salaryAfterTax + '\'' +
-                '}';
+        return "Employee [employeeId=" + employeeId + ", employeeName=" + employeeName + ", employeeEmail="
+                + employeeEmail + ", salary=" + salary + ", tax=" + tax + ", salaryAfterTax=" + salaryAfterTax + "]";
     }
 }

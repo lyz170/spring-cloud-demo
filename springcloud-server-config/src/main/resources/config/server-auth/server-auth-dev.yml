@@ -1,0 +1,6 @@
+## App property info
+app:
+  property:
+    log-path: /mycloud/springcloud-server-auth/dev-logs
+    env: DEV
+    

@@ -3,10 +3,10 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mycloud.demo</groupId>
-    <artifactId>server-config</artifactId>
+    <artifactId>springcloud-server-config</artifactId>
     <version>1.0</version>
 
-    <name>server-config</name>
+    <name>springcloud-server-config</name>
     <description>Spring cloud config server.</description>
 
     <parent>

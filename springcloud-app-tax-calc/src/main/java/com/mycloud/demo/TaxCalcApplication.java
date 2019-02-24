@@ -13,15 +13,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * http://localhost:9221/app-tax-calc/tax-calc/salary/{salary}<br>
  */
 @SpringBootApplication
-public class Application implements CommandLineRunner {
+public class TaxCalcApplication implements CommandLineRunner {
 
     @Value("${app.property.env}")
     public String ENVIRONMENT;
 
-    private static final Logger logger = LoggerFactory.getLogger(Application.class);
+    private static final Logger logger = LoggerFactory.getLogger(TaxCalcApplication.class);
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(TaxCalcApplication.class, args);
         logger.info("<<<<<<<<<< Application[springcloud-app-tax-calc] Started >>>>>>>>>>");
     }
 

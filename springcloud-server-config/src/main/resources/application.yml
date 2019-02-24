@@ -29,4 +29,4 @@ spring:
      config:
        server:
            native:
-              searchLocations: classpath:config/,classpath:config/app-salary,classpath:config/app-tax-calc,classpath:config/server-eureka
+              searchLocations: classpath:config/,classpath:config/app-salary,classpath:config/app-tax-calc,classpath:config/server-eureka,classpath:config/server-zuul,classpath:config/server-auth,classpath:config/app-client

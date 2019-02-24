@@ -17,6 +17,12 @@ public class SalaryController {
     @Autowired
     private SalaryService service;
 
+    @GetMapping(value = "test/hello")
+    @ResponseBody
+    public AppResponse<String> hello() {
+        return AppResponse.buildSuccessResponse("Hello, this is app-salary.");
+    }
+
     @GetMapping(value = "search-salary/all")
     @ResponseBody
     public AppResponse<List<Employee>> search() {
@@ -28,6 +34,13 @@ public class SalaryController {
     @ResponseBody
     public AppResponse<Employee> search(@PathVariable String id) {
         Employee result = service.findById(id);
+        return AppResponse.buildSuccessResponse(result);
+    }
+
+    @GetMapping(value = "search-salary/me")
+    @ResponseBody
+    public AppResponse<Employee> searchMe() {
+        Employee result = service.findMe();
         return AppResponse.buildSuccessResponse(result);
     }
 }

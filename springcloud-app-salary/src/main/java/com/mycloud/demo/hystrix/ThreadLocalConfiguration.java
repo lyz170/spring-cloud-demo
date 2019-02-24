@@ -1,0 +1,46 @@
+package com.mycloud.demo.hystrix;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+
+import com.netflix.hystrix.strategy.HystrixPlugins;
+import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
+import com.netflix.hystrix.strategy.eventnotifier.HystrixEventNotifier;
+import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
+import com.netflix.hystrix.strategy.metrics.HystrixMetricsPublisher;
+import com.netflix.hystrix.strategy.properties.HystrixPropertiesStrategy;
+
+@Configuration
+public class ThreadLocalConfiguration {
+
+    /**
+     * 获取现有的HystrixConcurrencyStrategy再装配到ThreadLocalAwareStrategy中。
+     */
+    @Autowired(required = false)
+    private HystrixConcurrencyStrategy existingConcurrencyStrategy;
+
+    @PostConstruct
+    public void init() {
+
+        // Keeps references of existing Hystrix plugins.
+        HystrixEventNotifier eventNotifier = HystrixPlugins.getInstance().getEventNotifier();
+        HystrixMetricsPublisher metricsPublisher = HystrixPlugins.getInstance().getMetricsPublisher();
+        HystrixPropertiesStrategy propertiesStrategy = HystrixPlugins.getInstance().getPropertiesStrategy();
+        HystrixCommandExecutionHook commandExecutionHook = HystrixPlugins.getInstance().getCommandExecutionHook();
+
+        // reset
+        HystrixPlugins.reset();
+
+        // self-define Hystrix ThreadConcurrency Strategy
+        HystrixPlugins.getInstance()
+                .registerConcurrencyStrategy(new ThreadLocalAwareStrategy(existingConcurrencyStrategy));
+
+        // register again
+        HystrixPlugins.getInstance().registerEventNotifier(eventNotifier);
+        HystrixPlugins.getInstance().registerMetricsPublisher(metricsPublisher);
+        HystrixPlugins.getInstance().registerPropertiesStrategy(propertiesStrategy);
+        HystrixPlugins.getInstance().registerCommandExecutionHook(commandExecutionHook);
+    }
+}

@@ -1,0 +1,12 @@
+# bootstrap.yml用来程序引导时执行，应用于更加早期配置信息读取，如可以使用来配置application.yml中使用到参数等
+# bootstrap.yml先于application.yml加载
+spring:
+  application:
+    name: server-zuul
+  # 指定config server服务的位置
+  cloud:
+    config:
+      uri: http://localhost:9111/server-config
+  # 读取config server上的server-zuul-dev.yml，这个参数也可以在启动jar包时设置（覆盖）
+  profiles:
+    active: dev

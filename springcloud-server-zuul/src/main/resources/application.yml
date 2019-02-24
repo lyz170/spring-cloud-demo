@@ -1,0 +1,89 @@
+## App property info
+app:
+  property:
+    log-path: /mycloud/springcloud-server-zuul/local-logs
+    env: LOCAL
+
+## Server info
+server:
+  port: 9131
+  servlet:
+    context-path: /server-zuul
+
+## Zuul info
+# (1) 通过服务发现自动映射路由，此时不需要任何配置
+#   URL: http://localhost:9131/server-zuul/app-tax-calc/app-tax-calc/tax-calc/salary/10000
+#   说明：第一个"/app-tax-calc"表示基于Eureka的服务ID而自动创建的服务路由；第二个"/app-tax-calc"表示app-tax-calc服务的server.servlet.context-path
+
+# (2) 通过服务发现手动映射路由，这里zuul是自动依赖hystrix，ribbon的
+#   URL: http://localhost:9131/server-zuul/api2/app-tax-calc/tax-calc/salary/10000
+zuul:
+  # 排除所有的基于Eureka的服务ID注册的路由
+  ignored-services: '*'
+  routes:
+    app-salary: /api1/**
+    app-tax-calc: /api2/**
+    app-client: /api3/**
+#Zuul使用Netflix的Hystrix和Ribbon库，来防止长时间运行服务调用而影响服务网关的性能
+#设置Hystrix超时(default可以替换成具体的某个服务ID)
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 6000
+#设置Ribbon超时
+ribbon:
+  ConnectTimeout: 1000
+  ReadTimeout: 2000
+
+# (3) 使用静态URL映射到多个路由，这种方式绕过了Eureka，直接重定向到指定URL，这里zuul是不再依赖hystrix，ribbon. To achieve those goals, you can specify a serviceId with a static list of servers, as follows:
+#   URL: http://localhost:9131/server-zuul/api2/app-tax-calc/tax-calc/salary/10000
+#   Refer to: https://cloud.spring.io/spring-cloud-static/spring-cloud-netflix/2.0.2.RELEASE/single/spring-cloud-netflix.html#netflix-zuul-reverse-proxy
+#zuul:
+#  ignored-services: '*'
+#  routes:
+#    app-tax-calc:
+#      path: /api2/**
+#      serviceId: app-tax-calc
+#hystrix:
+#  command:
+#    app-tax-calc:
+#      execution:
+#        isolation:
+#          thread:
+#            # 设置hystrix的timeout
+#            timeoutInMilliseconds: 8000
+#app-tax-calc:
+#  ribbon:
+#    NIWSServerListClassName: com.netflix.loadbalancer.ConfigurationBasedServerList
+#    # 可以负载均衡映射到多个路由，这里只写了一个，因为"app-tax-calc"服务只有一个实例
+#    # 如果"app-tax-calc"服务有多个实例，端口分别为[9221][9222]，则[listOfServers: http://localhost:9221,http://localhost:9222]
+#    listOfServers: http://localhost:9221
+#    # 设置ribbon的timeout
+#    ConnectTimeout: 1000
+#    ReadTimeout: 3000
+#    MaxTotalHttpConnections: 500
+#    MaxConnectionsPerHost: 100
+
+## Eureka info
+eureka:
+  instance:
+    # You need to change these, even for an Actuator application if you use a non-default context path or servlet path
+    # https://cloud.spring.io/spring-cloud-static/spring-cloud-netflix/2.0.2.RELEASE/single/spring-cloud-netflix.html#_authenticating_with_the_eureka_server
+    statusPageUrlPath: ${server.servlet.context-path}/actuator/info
+    healthCheckUrlPath: ${server.servlet.context-path}/actuator/health
+    # 注册服务的IP而不是服务器名称
+    preferIpAddress: true
+  client:
+    # 向Eureka注册服务
+    registerWithEureka: true
+    # 拉取注册表的本地副本
+    fetchRegistry: true
+    serviceUrl:
+      # 查询[server-zuul]项目信息：<http://localhost:9121/server-eureka/eureka/apps/server-zuul>
+      defaultZone: http://localhost:9121/server-eureka/eureka/
+
+## Actuator info (need add '/actuator' prefix)
+management:
+  endpoints:
+    web:
+      exposure:
+        # routes: 查看所有路由 | filters: 查看所有过滤器
+        # 按理说info,health是默认曝光的，但是这里还是要显式写出来
+        include: routes,filters,info,health
